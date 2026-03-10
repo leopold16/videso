@@ -1,0 +1,18 @@
+export const IPC = {
+  GET_SOURCES: 'get-sources',
+  GET_SETTINGS: 'get-settings',
+  SET_SETTING: 'set-setting',
+  PICK_SAVE_PATH: 'pick-save-path',
+  SELECT_SOURCE: 'select-source',
+  START_RECORDING: 'start-recording',
+  STOP_RECORDING: 'stop-recording',
+  TOGGLE_RECORDING: 'toggle-recording',
+  RECORDING_DATA: 'recording-data',
+  RECORDER_STATUS: 'recorder-status',
+  CHECK_PERMISSIONS: 'check-permissions',
+  REQUEST_PERMISSION: 'request-permission',
+  COUNTDOWN_DONE: 'countdown-done',
+  BEGIN_CAPTURE: 'begin-capture',
+  STOP_CAPTURE: 'stop-capture',
+  CONVERSION_PROGRESS: 'conversion-progress',
+} as const;
