@@ -7,17 +7,22 @@ import type { DesktopSource } from '../shared/types';
 
 export function registerIpcHandlers() {
   ipcMain.handle(IPC.GET_SOURCES, async (): Promise<DesktopSource[]> => {
-    const sources = await desktopCapturer.getSources({
-      types: ['screen', 'window'],
-      thumbnailSize: { width: 320, height: 180 },
-    });
+    try {
+      const sources = await desktopCapturer.getSources({
+        types: ['screen', 'window'],
+        thumbnailSize: { width: 320, height: 180 },
+      });
 
-    return sources.map((s) => ({
-      id: s.id,
-      name: s.name,
-      thumbnailDataUrl: s.thumbnail.toDataURL(),
-      displayId: s.display_id,
-    }));
+      return sources.map((s) => ({
+        id: s.id,
+        name: s.name,
+        thumbnailDataUrl: s.thumbnail.toDataURL(),
+        displayId: s.display_id,
+      }));
+    } catch (err) {
+      console.error('getSources failed (screen recording permission needed):', err);
+      return [];
+    }
   });
 
   ipcMain.handle(IPC.GET_SETTINGS, () => {

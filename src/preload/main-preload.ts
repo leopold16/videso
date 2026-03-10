@@ -1,5 +1,23 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { IPC } from '../shared/channels';
+
+// Inline channel names — preload scripts run in a sandboxed context
+// and cannot require() non-built-in modules.
+const IPC = {
+  GET_SOURCES: 'get-sources',
+  GET_SETTINGS: 'get-settings',
+  SET_SETTING: 'set-setting',
+  PICK_SAVE_PATH: 'pick-save-path',
+  SELECT_SOURCE: 'select-source',
+  START_RECORDING: 'start-recording',
+  STOP_RECORDING: 'stop-recording',
+  TOGGLE_RECORDING: 'toggle-recording',
+  RECORDING_DATA: 'recording-data',
+  RECORDER_STATUS: 'recorder-status',
+  CHECK_PERMISSIONS: 'check-permissions',
+  REQUEST_PERMISSION: 'request-permission',
+  BEGIN_CAPTURE: 'begin-capture',
+  STOP_CAPTURE: 'stop-capture',
+} as const;
 
 contextBridge.exposeInMainWorld('videso', {
   getSources: () => ipcRenderer.invoke(IPC.GET_SOURCES),

@@ -7,7 +7,7 @@ interface Props {
 
 export default function SettingsView({ settings, onUpdate }: Props) {
   async function handlePickPath() {
-    const newPath = await window.videso.pickSavePath!();
+    const newPath = await window.videso.pickSavePath?.();
     if (newPath) onUpdate();
   }
 

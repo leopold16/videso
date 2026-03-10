@@ -1,5 +1,10 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { IPC } from '../shared/channels';
+
+const IPC = {
+  COUNTDOWN_DONE: 'countdown-done',
+  STOP_RECORDING: 'stop-recording',
+  RECORDER_STATUS: 'recorder-status',
+} as const;
 
 contextBridge.exposeInMainWorld('videso', {
   onStartCountdown: (cb: () => void) => {

@@ -1,7 +1,8 @@
-import Store from 'electron-store';
 import { app } from 'electron';
 import path from 'path';
 import type { AppSettings, Resolution } from '../shared/types';
+
+let store: any = null;
 
 const defaults: AppSettings = {
   savePath: path.join(app.getPath('videos'), 'Videso'),
@@ -9,7 +10,14 @@ const defaults: AppSettings = {
   webcamEnabled: false,
 };
 
-const store = new (Store as any)({ defaults }) as any;
+// Use Function trick to preserve real ESM import() — TypeScript compiles
+// `await import(...)` to require() in CommonJS mode, which breaks ESM-only packages.
+const dynamicImport = new Function('specifier', 'return import(specifier)') as (specifier: string) => Promise<any>;
+
+export async function initStore(): Promise<void> {
+  const { default: Store } = await dynamicImport('electron-store');
+  store = new Store({ defaults });
+}
 
 export function getSettings(): AppSettings {
   return {

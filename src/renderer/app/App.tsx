@@ -25,46 +25,64 @@ export default function App() {
   useEffect(() => {
     loadSources();
     loadSettings();
-    const unsub1 = window.videso.onRecorderStatus!(setStatus);
-    const unsub2 = window.videso.onBeginCapture!(handleBeginCapture);
-    const unsub3 = window.videso.onStopCapture!(handleStopCapture);
-    return () => { unsub1(); unsub2(); unsub3(); };
+
+    if (!window.videso) return;
+    const unsub1 = window.videso.onRecorderStatus?.(setStatus);
+    const unsub2 = window.videso.onBeginCapture?.(handleBeginCapture);
+    const unsub3 = window.videso.onStopCapture?.(handleStopCapture);
+    return () => { unsub1?.(); unsub2?.(); unsub3?.(); };
   }, []);
 
   async function loadSources() {
-    const s = await window.videso.getSources!();
-    setSources(s);
-    if (s.length > 0 && !selectedSourceId) {
-      setSelectedSourceId(s[0].id);
-      window.videso.selectSource!(s[0].id);
+    try {
+      const s = await window.videso?.getSources?.();
+      if (s) {
+        setSources(s);
+        if (s.length > 0 && !selectedSourceId) {
+          setSelectedSourceId(s[0].id);
+          window.videso.selectSource?.(s[0].id);
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load sources:', e);
     }
   }
 
   async function loadSettings() {
-    const s = await window.videso.getSettings!();
-    setSettings(s);
+    try {
+      const s = await window.videso?.getSettings?.();
+      if (s) {
+        setSettings(s);
+      } else {
+        // Fallback defaults so UI still renders
+        setSettings({ savePath: '', resolution: '1080p', webcamEnabled: false });
+      }
+    } catch (e) {
+      console.warn('Failed to load settings:', e);
+      setSettings({ savePath: '', resolution: '1080p', webcamEnabled: false });
+    }
   }
 
   function handleSelectSource(id: string) {
     setSelectedSourceId(id);
-    window.videso.selectSource!(id);
+    window.videso.selectSource?.(id);
   }
 
   async function handleResolutionChange(r: Resolution) {
-    await window.videso.setSetting!('resolution', r);
+    await window.videso.setSetting?.('resolution', r);
     setSettings((prev) => prev ? { ...prev, resolution: r } : prev);
   }
 
   async function handleWebcamToggle(enabled: boolean) {
-    await window.videso.setSetting!('webcamEnabled', enabled);
+    await window.videso.setSetting?.('webcamEnabled', enabled);
     setSettings((prev) => prev ? { ...prev, webcamEnabled: enabled } : prev);
   }
 
   function handleRecord() {
     if (status.state === 'idle') {
-      window.videso.startRecording!();
+      window.videso.startRecording?.();
     } else if (status.state === 'recording') {
-      window.videso.stopRecording!();
+      window.videso.stopRecording?.();
     }
   }
 
@@ -160,7 +178,7 @@ export default function App() {
       mediaRecorder.onstop = async () => {
         const blob = new Blob(chunksRef.current, { type: 'video/webm' });
         const buffer = await blob.arrayBuffer();
-        window.videso.sendRecordingData!(buffer);
+        window.videso.sendRecordingData?.(buffer);
         cleanup();
       };
 

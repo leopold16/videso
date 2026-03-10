@@ -4,6 +4,7 @@ import { createPanelWindow, createCountdownWindow, createIndicatorWindow } from 
 import { registerShortcuts, unregisterShortcuts } from './shortcuts';
 import { registerIpcHandlers } from './ipc-handlers';
 import { recorder } from './recorder';
+import { initStore } from './store';
 import type { RecorderStatus } from '../shared/types';
 
 // Hide dock icon — menu bar app only
@@ -13,7 +14,8 @@ let panelWindow: BrowserWindow;
 let countdownWindow: BrowserWindow;
 let indicatorWindow: BrowserWindow;
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  await initStore();
   panelWindow = createPanelWindow();
   countdownWindow = createCountdownWindow();
   indicatorWindow = createIndicatorWindow();

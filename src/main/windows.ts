@@ -26,9 +26,11 @@ export function createPanelWindow(): BrowserWindow {
     maximizable: false,
     fullscreenable: false,
     skipTaskbar: true,
-    transparent: true,
+    transparent: false,
+    backgroundColor: '#1e1e1e',
     vibrancy: 'popover',
     visualEffectState: 'active',
+    roundedCorners: true,
     webPreferences: {
       preload: resolvePreload('main-preload.js'),
       contextIsolation: true,
@@ -38,6 +40,7 @@ export function createPanelWindow(): BrowserWindow {
 
   win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
   win.loadURL(resolveRenderer('app'));
+  if (isDev) win.webContents.openDevTools({ mode: 'detach' });
   return win;
 }
 
